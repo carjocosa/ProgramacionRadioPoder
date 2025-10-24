@@ -47,7 +47,63 @@
 </div>
 
 <script>
-  const urlJson = 'https://raw.githubusercontent.com/carjocosa/ProgramacionRadioPoder/6e3f90771f755e996826dc3faf56a4b971581441/horarios.json'; // reemplaza por tu URL real
+  // JSON embebido corregido con comas entre objetos
+  const programacion = {
+    "lunes": [
+      {"programa": "Música Libre", "inicio": "00:00", "fin": "06:00"},
+      {"programa": "A Primera Hora", "inicio": "06:00", "fin": "08:30"},
+      {"programa": "Todo Cambia", "inicio": "08:30", "fin": "11:30"},
+      {"programa": "El Sol Ya Estaba Ahí", "inicio": "11:30", "fin": "15:00"},
+      {"programa": "Tardes de Poder", "inicio": "15:00", "fin": "18:00"},
+      {"programa": "Música Libre", "inicio": "18:00", "fin": "23:59"}
+    ],
+    "martes": [
+      {"programa": "Música Libre", "inicio": "00:00", "fin": "06:00"},
+      {"programa": "A Primera Hora", "inicio": "06:00", "fin": "08:30"},
+      {"programa": "Todo Cambia", "inicio": "08:30", "fin": "11:30"},
+      {"programa": "El Sol Ya Estaba Ahí", "inicio": "11:30", "fin": "15:00"},
+      {"programa": "Tardes de Poder", "inicio": "15:00", "fin": "18:00"},
+      {"programa": "Música Libre", "inicio": "18:00", "fin": "23:59"}
+    ],
+    "miercoles": [
+      {"programa": "Música Libre", "inicio": "00:00", "fin": "06:00"},
+      {"programa": "A Primera Hora", "inicio": "06:00", "fin": "08:30"},
+      {"programa": "Todo Cambia", "inicio": "08:30", "fin": "11:30"},
+      {"programa": "El Sol Ya Estaba Ahí", "inicio": "11:30", "fin": "15:00"},
+      {"programa": "Tardes de Poder", "inicio": "15:00", "fin": "18:00"},
+      {"programa": "Música Libre", "inicio": "18:00", "fin": "23:59"}
+    ],
+    "jueves": [
+      {"programa": "Música Libre", "inicio": "00:00", "fin": "06:00"},
+      {"programa": "A Primera Hora", "inicio": "06:00", "fin": "08:30"},
+      {"programa": "Todo Cambia", "inicio": "08:30", "fin": "11:30"},
+      {"programa": "El Sol Ya Estaba Ahí", "inicio": "11:30", "fin": "15:00"},
+      {"programa": "Tardes de Poder", "inicio": "15:00", "fin": "18:00"},
+      {"programa": "Música Libre", "inicio": "18:00", "fin": "23:59"}
+    ],
+    "viernes": [
+      {"programa": "Música Libre", "inicio": "00:00", "fin": "06:00"},
+      {"programa": "A Primera Hora", "inicio": "06:00", "fin": "08:30"},
+      {"programa": "Todo Cambia", "inicio": "08:30", "fin": "11:30"},
+      {"programa": "El Sol Ya Estaba Ahí", "inicio": "11:30", "fin": "15:00"},
+      {"programa": "Tardes de Poder", "inicio": "15:00", "fin": "18:00"},
+      {"programa": "Música Libre", "inicio": "18:00", "fin": "23:59"}
+    ],
+    "sabado": [
+      {"programa": "Música Libre", "inicio": "00:00", "fin": "11:00"},
+      {"programa": "11 & 11", "inicio": "11:00", "fin": "13:00"},
+      {"programa": "Música Libre", "inicio": "13:00", "fin": "15:00"},
+      {"programa": "Golpes de la Semana", "inicio": "15:00", "fin": "17:00"},
+      {"programa": "Música Libre", "inicio": "17:00", "fin": "23:59"}
+    ],
+    "domingo": [
+      {"programa": "Música Libre", "inicio": "00:00", "fin": "11:00"},
+      {"programa": "Golpes de la Semana", "inicio": "11:00", "fin": "13:00"},
+      {"programa": "Música Libre", "inicio": "13:00", "fin": "18:00"},
+      {"programa": "Radio Reggae", "inicio": "18:00", "fin": "20:00"},
+      {"programa": "Música Libre", "inicio": "20:00", "fin": "23:59"}
+    ]
+  };
 
   function getCurrentTimeGmtMinus5() {
     const now = new Date();
@@ -56,7 +112,7 @@
   }
 
   function formatTime(date) {
-    return date.toTimeString().slice(0,5);
+    return date.toTimeString().slice(0, 5);
   }
 
   function encuentraProgramaActual(programasDelDia, horaActualStr) {
@@ -68,30 +124,23 @@
     return null;
   }
 
-  async function actualizarPrograma() {
-    try {
-      const response = await fetch(urlJson);
-      const data = await response.json();
-      const diasSemana = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
-      const fechaActual = getCurrentTimeGmtMinus5();
-      const diaSemanaStr = diasSemana[fechaActual.getDay()];
-      const horaActualStr = formatTime(fechaActual);
-      const programasDelDia = data[diaSemanaStr];
-      const programaActual = encuentraProgramaActual(programasDelDia, horaActualStr);
+  function actualizarPrograma() {
+    const diasSemana = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+    const fechaActual = getCurrentTimeGmtMinus5();
+    const diaSemanaStr = diasSemana[fechaActual.getDay()];
+    const horaActualStr = formatTime(fechaActual);
+    const programasDelDia = programacion[diaSemanaStr];
+    const programaActual = encuentraProgramaActual(programasDelDia, horaActualStr);
 
-      const contenedor = document.getElementById('programaActual');
-      if (programaActual) {
-        contenedor.innerHTML = `
-          <div class="titulo">${programaActual.programa}</div>
-          <div class="horario">${programaActual.inicio} - ${programaActual.fin}</div>
-          <div class="estado">Ahora en emisión</div>
-        `;
-      } else {
-        contenedor.innerHTML = '<div class="titulo">Fuera de programación</div><div class="estado">Sin programa activo</div>';
-      }
-    } catch (error) {
-      document.getElementById('programaActual').innerHTML = '<div class="titulo">Error</div><div class="estado">No se pudo cargar la programación</div>';
-      console.error(error);
+    const contenedor = document.getElementById('programaActual');
+    if (programaActual) {
+      contenedor.innerHTML = `
+        <div class="titulo">${programaActual.programa}</div>
+        <div class="horario">${programaActual.inicio} - ${programaActual.fin}</div>
+        <div class="estado">Ahora en emisión</div>
+      `;
+    } else {
+      contenedor.innerHTML = '<div class="titulo">Fuera de programación</div><div class="estado">Sin programa activo</div>';
     }
   }
 
